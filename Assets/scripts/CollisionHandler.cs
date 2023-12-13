@@ -17,30 +17,10 @@ public class CollisionHandler : MonoBehaviour
     AudioSource audiosource;
 
     bool isTransitioning = false;
-
+    bool collisionDisabled = false;
 
     public int delay = 1;
-    void OnCollisionEnter(Collision other){
-        if (isTransitioning)
-        {
-            return;
-        }
-
-        switch(other.gameObject.tag)
-        {
-            case "Start":
-            Debug.Log("we are at the start");
-            break;
-            case "Finish":
-                startSuccessSequence();
-
-                break;
-            default:
-                startCrashSequence();
-                break;
-        }
-            
-    }
+    
 
 
 
@@ -55,8 +35,44 @@ public class CollisionHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        DebugKeys();
     }
+    void OnCollisionEnter(Collision other)
+    {
+        if (isTransitioning || collisionDisabled)
+        {
+            return;
+        }
+
+        switch (other.gameObject.tag)
+        {
+            case "Start":
+                Debug.Log("we are at the start");
+                break;
+            case "Finish":
+                startSuccessSequence();
+
+                break;
+            default:
+                startCrashSequence();
+                break;
+        }
+
+    }
+
+    private void DebugKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            loadNextLevel();
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionDisabled = !collisionDisabled;
+        }
+
+    }
+
     void loadNextLevel()
     {
         int currentScene = SceneManager.GetActiveScene().buildIndex;
